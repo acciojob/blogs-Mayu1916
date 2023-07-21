@@ -7,8 +7,10 @@ import com.driver.repositories.BlogRepository;
 import com.driver.repositories.ImageRepository;
 import com.driver.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.auditing.CurrentDateTimeProvider;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,11 +25,15 @@ public class BlogService {
 
     public Blog createAndReturnBlog(Integer userId, String title, String content) {
         //create a blog at the current time
-
+        User user =userRepository1.findById(userId).get();
+        Blog blog=new Blog(title,content,user);
+        blog.setPubDate(new Date());
+        user.getBlogList().add(blog);
+        userRepository1.save(user);
+        return blog;
     }
 
     public void deleteBlog(int blogId){
-        //delete blog and corresponding images
-
+        blogRepository1.deleteById(blogId);
     }
 }
